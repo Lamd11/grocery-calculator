@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
 
-
-
-
 const TableComponent = () => {
     const [items, setItems] = useState([]);
     const [newItem, setNewItem] = useState('');
@@ -18,10 +15,9 @@ const TableComponent = () => {
     } 
 
     const addItem = () => {
-        
         const newItmeObject = {
             name: newItem,
-            person: newPerson,
+            person: selectedPerson, // Use selectedPerson instead of newPerson
             price: parseFloat(newPrice),
         };
 
@@ -29,13 +25,12 @@ const TableComponent = () => {
         setNewItem('');
         setNewPerson('');
         setNewPrice('');
-
     };
 
-    const addPerson = () =>{
+    const addPerson = () => {
         if (newPerson && !persons.includes(newPerson)){
             setPersons([...persons, newPerson]);
-            setSelectedPerson(newPerson);
+            setSelectedPerson(newPerson); // Set selectedPerson when adding a new person
             setNewPerson('');
         }
     }
@@ -45,17 +40,17 @@ const TableComponent = () => {
             <label>
                 Item Name:
                 <input
-                type="text"
-                value={newItem}
-                onChange={(e) => setNewItem(e.target.value)}
+                    type="text"
+                    value={newItem}
+                    onChange={(e) => setNewItem(e.target.value)}
                 />
             </label>
 
             <label>
                 Name of Person:
                 <select
-                value={selectedPerson}
-                onChange={(e) => setSelectedPerson(e.target.value)}
+                    value={selectedPerson} // Use selectedPerson instead of newPerson
+                    onChange={(e) => setSelectedPerson(e.target.value)}
                 >
                     <option value="" disabled>
                         Select Person
@@ -72,26 +67,24 @@ const TableComponent = () => {
                     onChange={(e) => setNewPerson(e.target.value)}
                 />
                 <button onClick={addPerson}>Add Person</button>
-
             </label>
 
             <label>
                 Price:
                 <input
-                type="text"
-                value={newPrice}
-                onChange={(e) => setNewPrice(e.target.value)}
+                    type="text"
+                    value={newPrice}
+                    onChange={(e) => setNewPrice(e.target.value)}
                 />
             </label>
 
             <button onClick={addItem}>Add Item</button>
 
-            
             <table>
                 <thead>
                     <tr>
+                        <th>Item</th>
                         <th>Name</th>
-                        <th>Name of Person</th>
                         <th>Price</th>
                         <th>Price After Tax</th>
                     </tr>
