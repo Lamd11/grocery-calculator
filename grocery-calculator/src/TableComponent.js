@@ -7,6 +7,7 @@ const TableComponent = () => {
     const [selectedPerson, setSelectedPerson] = useState('');
     const [persons, setPersons] = useState([]);
     const [newPrice, setNewPrice] = useState('');
+    const [editIndex, setEditIndex] = useState(null);
 
     const calculatePriceAfterTax = (price) => {
         const taxRate = 1.13;
@@ -15,17 +16,44 @@ const TableComponent = () => {
     } 
 
     const addItem = () => {
-        const newItmeObject = {
+        const newItemObject = {
             name: newItem,
             person: selectedPerson, // Use selectedPerson instead of newPerson
             price: parseFloat(newPrice),
         };
 
-        setItems([...items, newItmeObject])
+        if (editIndex !== null) {
+            // If editIndex is not null, update the existing item
+            const updatedItems = [...items];
+            updatedItems[editIndex] = newItemObject;
+            setItems(updatedItems);
+            setEditIndex(null);
+        } else {
+            // If editIndex is null, add a new item
+            setItems([...items, newItemObject]);
+        }
+
         setNewItem('');
         setNewPerson('');
+        setSelectedPerson('');
         setNewPrice('');
     };
+
+    const editItem = (index) => {
+        const itemToEdit = items[index];
+        setNewItem(itemToEdit.name);
+        setSelectedPerson(itemToEdit.person);
+        setNewPrice(itemToEdit.price.toString());
+        setEditIndex(index);
+    }
+
+    const cancelEdit = () => {
+        setNewItem('');
+        setNewPerson('');
+        setSelectedPerson('');
+        setNewPrice('');
+        setEditIndex(null);
+    }
 
     const addPerson = () => {
         if (newPerson && !persons.includes(newPerson)){
@@ -78,7 +106,10 @@ const TableComponent = () => {
                 />
             </label>
 
-            <button onClick={addItem}>Add Item</button>
+            
+
+            <button onClick={addItem}>{editIndex !== null ? 'Update Item' : 'Add Item'}</button>
+            {editIndex !== null && <button onClick={cancelEdit}>Cancel</button>}
 
             <table>
                 <thead>
@@ -87,15 +118,23 @@ const TableComponent = () => {
                         <th>Name</th>
                         <th>Price</th>
                         <th>Price After Tax</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {items.map((item, index) => (
                         <tr key={index}>
-                            <td>{item.name}</td>
-                            <td>{item.person}</td>
-                            <td>{item.price}</td>
+                            <td>{editIndex === index ? <input value={newItem} onChange={(e) => setNewItem(e.target.value)} /> : item.name}</td>
+                            <td>{editIndex === index ? <input value={selectedPerson} onChange={(e) => setSelectedPerson(e.target.value)} /> : item.person}</td>
+                            <td>{editIndex === index ? <input value={newPrice} onChange={(e) => setNewPrice(e.target.value)} /> : item.price}</td>
                             <td>{calculatePriceAfterTax(item.price)}</td>
+                            <td>
+                                {editIndex === index ? (
+                                    <button onClick={() => addItem()}>Save</button>
+                                ) : (
+                                    <button onClick={() => editItem(index)}>Edit</button>
+                                )}
+                            </td>
                         </tr>
                     ))}
                 </tbody>
